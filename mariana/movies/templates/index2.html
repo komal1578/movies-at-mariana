@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Movies List</title>
+    <style>
+      .container {
+        text-align: center;
+        margin: 50px auto 0;
+        max-width: 1200px;
+      }
+
+      .movies-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .movies-table th,
+      .movies-table td {
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+
+      .search-filter-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .search-form {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .search-form input[type="text"] {
+        padding: 5px;
+        width: 300px;
+        margin-right: 10px;
+      }
+
+      .search-query {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .search-query p {
+        margin-right: 10px;
+      }
+
+      .filter-form {
+        display: flex;
+        align-items: center;
+      }
+
+      .filter-form label {
+        margin-right: 10px;
+      }
+
+      .filter-form button[type="submit"] {
+        padding: 5px 10px;
+      }
+
+      .genre-checkboxes {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+
+      .genre-checkbox {
+        margin-right: 10px;
+        margin-bottom: 5px;
+      }
+
+      .filter-query {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .filter-query p {
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Movies List</h1>
+
+      <div class="search-filter-container">
+        <form class="search-form" onsubmit="handleSearch(event)">
+          <input type="text" id="searchQuery" placeholder="Search movie..." />
+          <button type="submit">Search</button>
+        </form>
+
+        <div class="search-query">
+          <p id="searchQueryText"></p>
+          <button aria-hidden="true" onclick="clearSearch()">Clear</button>
+        </div>
+
+        <form class="filter-form" onsubmit="handleFilter(event)">
+          <label for="genre">Filter by Genre:</label>
+          <div class="genre-checkboxes">
+            {% for genre in genres %}
+            <div class="genre-checkbox">
+              <input
+                type="checkbox"
+                id="genre_{{ genre.id }}"
+                value="{{ genre.name }}"
+              />
+              <label for="genre_{{ genre.id }}">{{ genre.name }}</label>
+            </div>
+            {% endfor %}
+          </div>
+          <button type="submit">Filter</button>
+        </form>
+
+        <div class="filter-query">
+          <p id="selectedGenresText"></p>
+          <button aria-hidden="true" onclick="clearFilter()">Clear</button>
+        </div>
+      </div>
+
+      <table class="movies-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Poster</th>
+            <th>Genres</th>
+            <th>Rating</th>
+            <th>Year Release</th>
+            <th>Metacritic Rating</th>
+            <th>Runtime</th>
+          </tr>
+        </thead>
+        <tbody id="moviesTableBody">
+          {% for movie in movies %}
+          <tr>
+            <td>{{ movie.title }}</td>
+            <td>
+              <img
+                src="{{ movie.posters.url }}"
+                alt="{{ movie.title }} poster"
+              />
+            </td>
+            <td>{{ movie.genres.all|join:', ' }}</td>
+            <td>{{ movie.rating }}</td>
+            <td>{{ movie.year_release }}</td>
+            <td>{{ movie.metacritic_rating }}</td>
+            <td>{{ movie.runtime }} minutes</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      const searchForm = document.querySelector(".search-form");
+      const searchQueryInput = document.getElementById("searchQuery");
+      const searchQueryText = document.getElementById("searchQueryText");
+      const selectedGenresText = document.getElementById("selectedGenresText");
+      const filterForm = document.querySelector(".filter-form");
+      const genreCheckboxes = document.querySelectorAll(".genre-checkbox input");
+      const moviesTableBody = document.getElementById("moviesTableBody");
+
+      // Function to handle search form submission
+      function handleSearch(event) {
+        event.preventDefault();
+        const searchQuery = searchQueryInput.value.trim();
+        searchQueryText.textContent = searchQuery;
+        moviesTableBody.innerHTML = "";
+        fetchMoviesData(searchQuery, getSelectedGenres());
+        clearFilter();
+      }
+
+      // Function to handle filter form submission
+      function handleFilter(event) {
+        event.preventDefault();
+        const selectedGenres = getSelectedGenres();
+        selectedGenresText.textContent = selectedGenres.join(", ");
+        moviesTableBody.innerHTML = "";
+        fetchMoviesData(searchQueryText.textContent, selectedGenres);
+      }
+
+      // Function to fetch movies data based on search query and selected genres
+      function fetchMoviesData(searchQuery, selectedGenres) {
+        const queryParams = new URLSearchParams();
+        if (searchQuery) queryParams.append("search_query", searchQuery);
+        if (selectedGenres.length > 0)
+          queryParams.append("genre", selectedGenres.join(","));
+
+        fetch(`/movies/index/?${queryParams.toString()}`)
+          .then((response) => response.text())
+          .then((data) => {
+            moviesTableBody.innerHTML = data;
+          })
+          .catch((error) => console.log(error));
+      }
+
+      // Function to get the selected genres
+      function getSelectedGenres() {
+        const selectedGenres = [];
+        genreCheckboxes.forEach((checkbox) => {
+          if (checkbox.checked) {
+            selectedGenres.push(checkbox.value);
+          }
+        });
+        return selectedGenres;
+      }
+
+      // Function to clear the search and filter
+      function clearSearch() {
+        searchQueryInput.value = "";
+        searchQueryText.textContent = "";
+        moviesTableBody.innerHTML = "";
+        fetchMoviesData("", getSelectedGenres());
+        clearFilter();
+      }
+
+      // Function to clear the filter
+      function clearFilter() {
+        genreCheckboxes.forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+        selectedGenresText.textContent = "";
+        moviesTableBody.innerHTML = "";
+        fetchMoviesData(searchQueryText.textContent, []);
+      }
+
+      // Fetch initial movies data
+      fetchMoviesData("", []);
+    </script>
+  </body>
+</html>

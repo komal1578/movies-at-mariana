@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Movies</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+<body>
+    <h1>Movies</h1>
+        <section id="most-active">
+            <table class="person-table">			
+                <thead>
+                    <tr>
+                        <th class="left-th">Name</th>						
+                                <th>Watched</th>
+                                <th>Lists</th>
+                                <th>Likes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="table-person">
+                            <h3 class="title-3"> Josh Lewis </h3>
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-person">
+                            <h3 class="title-3"> Josh Lewis </h3>
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-person">
+                            <h3 class="title-3"> Josh Lewis </h3>
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-person">
+                            <h3 class="title-3"> Josh Lewis </h3>
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                        <td class="table-stats">
+                            <span class="icon"></span>5,416
+                        </td>
+                    </tr>	
+			    </tbody>
+		    </table>
+		</section>
+  <div id="filters">
+    <label for="genre-filter">Filter by Genre:</label>
+    <select id="genre-filter" multiple>
+      <!-- Options for genre filter will be dynamically added here -->
+    </select>
+  </div>
+  <div id="search">
+    <label for="title-search">Search by Title:</label>
+    <input type="text" id="title-search" placeholder="Enter movie title">
+  </div>
+  <ul id="movies-list">
+    <!-- Movie items will be dynamically added here -->
+  </ul>
+
+  <script src="script.js"></script>
+</body>
+</html>

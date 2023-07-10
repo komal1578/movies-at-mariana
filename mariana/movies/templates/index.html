@@ -1,0 +1,127 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Movies List</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+    <style>
+.checked {
+  color: orange;
+}
+
+/* Modified from: https://github.com/mukulkant/Star-rating-using-pure-css */
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+          <div class="navbar-header">
+              <a class="navbar-brand" href="#">
+                  Marina</a>
+          </div>
+          <ul class="nav navbar-nav">
+              <li><a href="/">Home</a></li>
+              <li class="active"><a href="/index">Movies List</a></li>
+          </ul>
+      </div>
+  </nav>
+    <div class="container">
+
+      <h1>Movies List</h1>
+      <link rel="stylesheet" href=
+      "https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+          <script src=
+      "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+          </script>
+          <script src=
+      "https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js">
+          </script>
+      <link rel="stylesheet" href="//cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+
+      <div class="search-filter-container">
+        <form class="search-form" method="GET" action="{% url 'movies:index' %}">
+          <!-- <input type="text" name="search_query" placeholder="Search movie..."/>
+          <button type="submit">Search</button> -->
+        </form>
+
+        {% if search_query %}
+        <div class="search-query">
+          <p>Search results for: {{ search_query }}</p>
+          <button class="btn btn-primary" aria-hidden="true" onclick="location.href='{% url 'movies:index' %}'" > Clear </button>
+        </div>
+        {% endif %}
+
+        <form class="filter-form" method="GET" action="{% url 'movies:index' %}">
+            <label for="genre">Filter by Genre:</label>
+            <div class="genre-checkboxes">
+                {% for genre in genres %}
+                <div class="genre-checkbox">
+                <input type="checkbox" id="genre_{{ genre.id }}" name="genre" value="{{ genre.name }}" {% if genre.name in selected_genres %}checked{% endif %}>
+                <label for="genre_{{ genre.id }}">{{ genre.name }}</label>
+                </div>
+                {% endfor %}
+            </div>
+            <input type="hidden" name="search_query" value="{{ search_query }}">
+            <button class="btn btn-primary" type="submit">Filter</button>
+        </form>
+
+        {% if selected_genres %}
+        <div class="filter-query" style="margin-top: 20px;">
+            <label>Selected Genres:</label>
+            {% for genre in selected_genres %}
+            <span>{{ genre }}</span>{% if not forloop.last %},{% endif %}
+            {% endfor %}
+            </p>
+            <input type="hidden" name="search_query" value="{{ search_query }}">
+            <button class="btn btn-primary" aria-hidden="true" class="btn btn-primary" onclick="location.href='{% url 'movies:index' %}?search_query={{ search_query }}'">Clear</button>
+        </div>
+        {% endif %}
+      </div>
+
+      <table id="myTable" class="movies-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Poster</th>
+            <th>Genres</th>
+            <th>Rating</th>
+            <th>Year Release</th>
+            <th>Metacritic Rating</th>
+            <th>Runtime</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for movie in movies %}
+          <tr>
+            <td>{{ movie.title }}</td>
+            <td>
+              <img src="{{ movie.poster.url }}" alt="{{ movie.title }} poster" class="small-poster"/>
+            </td>
+            <td>{{ movie.genres.all|join:', ' }}</td>
+            <td>
+              <span class="fa fa-star {% if movie.rating == '1' %}checked{%else%}unchecked{% endif %}"></span>
+              <span class="fa fa-star {% if movie.rating == '2' %}checked{%else%}unchecked{% endif %}"></span>
+              <span class="fa fa-star {% if movie.rating == '3' %}checked{%else%}unchecked{% endif %}"></span>
+              <span class="fa fa-star {% if movie.rating == '4' %}checked{%else%}unchecked{% endif %}"></span>
+              <span class="fa fa-star {% if movie.rating == '5' %}checked{%else%}unchecked{% endif %}"></span>
+            </td>
+            <td>{{ movie.year_release }}</td>
+            <td>{{ movie.metacritic_rating }}</td>
+            <td>{{ movie.runtime }} minutes</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+  <script src="//cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready( function () {
+      let table = new DataTable('#myTable');
+    $('#myTable').DataTable();
+  } );
+  </script>
+</html>

@@ -7,6 +7,8 @@ Mariana Tek is hosting a series of events calledThe Movies@Mariana Tek this summ
 - Year Release
 - Metacritic Rating
 - Runtime
+
+
 There should be one filter and one search. The filter should be by Genre. It should be a dropdown list, populated with all genres of movies currently in our list and it should hide all movies that do not match the selected genre when clicked. Bonus points if it allows for multiple selections.
 
 The search should be by Title. It's should be a text input that, with each character, shows each movie that matches the current string and hides each movie that doesn't.# movies-at-mariana
